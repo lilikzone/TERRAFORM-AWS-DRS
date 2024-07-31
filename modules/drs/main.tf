@@ -72,7 +72,7 @@ resource "aws_subnet" "drs_subnet" {
   cidr_block = var.drs_subnet_cidr
 }
 
-resource "aws_security_group" "drs_sg" {
+resource "aws_security_group" "drs_id" {
   vpc_id = aws_vpc.drs_vpc.id
 
   ingress {
@@ -140,10 +140,12 @@ resource "aws_drs_replication_configuration_template" "drs_replication_template"
   staging_area_tags            = { "Name" = "DRS Staging Area" }
   use_dedicated_replication_server = false
   bandwidth_throttling         = 10000
+  default_large_staging_disk_type = "gp2"
   ebs_encryption               = "DEFAULT"
   replicated_disks {
     device_name = "/dev/sda1"
     iops        = 3000
     throughput  = 125
   }
+replication_servers_security_groups_ids = [aws_security_group.drs_id.id]
 }
